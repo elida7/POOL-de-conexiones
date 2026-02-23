@@ -1,13 +1,43 @@
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
-void main() {
-    //TIP Press <shortcut actionId="ShowIntentionActions"/> with your caret at the highlighted text
-    // to see how IntelliJ IDEA suggests fixing it.
-    IO.println(String.format("Hello and welcome!"));
+import config.Configuracion;
+import simulaciones.SimulacionPooled;
+import simulaciones.SimulacionRaw;
+import java.io.IOException;
+import java.util.Scanner;
 
-    for (int i = 1; i <= 5; i++) {
-        //TIP Press <shortcut actionId="Debug"/> to start debugging your code. We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/> breakpoint
-        // for you, but you can always add more by pressing <shortcut actionId="ToggleLineBreakpoint"/>.
-        IO.println("i = " + i);
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        
+        System.out.println("=== POOL DE CONEXIONES ===");
+        
+        try {
+            Configuracion config = new Configuracion("config.properties");
+            System.out.println("Config cargada: " + config.getCantidadMuestras() + " muestras");
+            
+            System.out.println("\nPresione Enter para RAW");
+            sc.nextLine();
+            SimulacionRaw raw = new SimulacionRaw(config);
+            raw.ejecutar();
+            
+            System.out.println("\nPresione Enter para POOLED");
+            sc.nextLine();
+            SimulacionPooled pooled = new SimulacionPooled(config);
+            pooled.ejecutar();
+            
+            System.out.println("\n=== ANALISIS ===");
+            System.out.println("RAW: " + raw.getTiempoTotal() + "ms");
+            System.out.println("POOLED: " + pooled.getTiempoTotal() + "ms");
+            
+            if (pooled.getTiempoTotal() < raw.getTiempoTotal()) {
+                System.out.println("MEJOR: POOLED");
+            } else {
+                System.out.println("MEJOR: RAW");
+            }
+            
+        } catch (Exception e) {
+            System.err.println("Error: " + e.getMessage());
+        }
+        
+        sc.close();
     }
 }
