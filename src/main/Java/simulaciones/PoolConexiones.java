@@ -1,12 +1,13 @@
-package simulaciones;
+package main.Java.simulaciones;
 
-import config.Configuracion;
-import utils.DatabaseUtil;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import main.Java.config.Configuracion;
+import main.Java.utils.DatabaseUtil;
 
 public class PoolConexiones {
     private BlockingQueue<Connection> pool;

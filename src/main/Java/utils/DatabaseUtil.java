@@ -1,7 +1,8 @@
-package utils;
+package main.Java.utils;
 
-import config.Configuracion;
 import java.sql.*;
+
+import main.Java.config.Configuracion;
 
 public class DatabaseUtil {
     
@@ -19,10 +20,17 @@ public class DatabaseUtil {
     }
     
     public static boolean ejecutarQuery(Connection conn, String query) {
+        return ejecutarQuery(conn, query, false);
+    }
+
+    public static boolean ejecutarQuery(Connection conn, String query, boolean imprimir) {
         try (Statement stmt = conn.createStatement()) {
             stmt.executeQuery(query);
+            if (imprimir) System.out.println("Query ejecutada: " + query);
             return true;
         } catch (SQLException e) {
+            System.err.println("ERROR SQL: " + e.getMessage());
+            if (imprimir) e.printStackTrace();
             return false;
         }
     }

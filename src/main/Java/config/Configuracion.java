@@ -1,4 +1,4 @@
-package config;
+package main.Java.config;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -17,7 +17,17 @@ public class Configuracion {
     
     public Configuracion(String archivo) throws IOException {
         properties = new Properties();
-        properties.load(new FileInputStream(archivo));
+        try {
+            properties.load(new FileInputStream(archivo));
+        } catch (IOException e) {
+            try (var is = getClass().getClassLoader().getResourceAsStream(archivo)) {
+                if (is != null) {
+                    properties.load(is);
+                } else {
+                    throw e;
+                }
+            }
+        }
         this.dbConnectionString = properties.getProperty("db.connectionString");
         this.dbUser = properties.getProperty("db.user");
         this.dbPassword = properties.getProperty("db.password");
