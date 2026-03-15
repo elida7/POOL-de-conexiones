@@ -2,8 +2,12 @@ C:\Users\Usuario\OneDrive\Desktop\visual\pool de conexiones\src\main\Java\Main.j
 C:\Users\Usuario\OneDrive\Desktop\visual\pool de conexiones\src\main\Java\config\Configuracion.java
 C:\Users\Usuario\OneDrive\Desktop\visual\pool de conexiones\src\main\Java\simulaciones\PoolConexiones.java
 C:\Users\Usuario\OneDrive\Desktop\visual\pool de conexiones\src\main\Java\utils\LoggerSimulacion.java
-C:\Users\Usuario\OneDrive\Desktop\visual\pool de conexiones\src\main\Java\simulaciones\SimulacionPooled.java
+C:\Users\Usuario\OneDrive\Desktop\visual\pool de conexiones\src\main\Java\dbcomponent\core\ConnectionProvider.java
 C:\Users\Usuario\OneDrive\Desktop\visual\pool de conexiones\src\main\Java\utils\DatabaseUtil.java
 C:\Users\Usuario\OneDrive\Desktop\visual\pool de conexiones\src\main\Java\modelos\Muestra.java
 C:\Users\Usuario\OneDrive\Desktop\visual\pool de conexiones\src\main\Java\simulaciones\SimulacionRaw.java
+C:\Users\Usuario\OneDrive\Desktop\visual\pool de conexiones\src\main\Java\simulaciones\SimulacionPooled.java
+C:\Users\Usuario\OneDrive\Desktop\visual\pool de conexiones\src\main\Java\dbcomponent\core\ConnectionConfig.java
+C:\Users\Usuario\OneDrive\Desktop\visual\pool de conexiones\src\main\Java\dbcomponent\core\DriverManagerConnectionProvider.java
+C:\Users\Usuario\OneDrive\Desktop\visual\pool de conexiones\src\main\Java\dbcomponent\core\ConnectionPool.java
 C:\Users\Usuario\OneDrive\Desktop\visual\pool de conexiones\src\main\Java\simulaciones\HiloPeticion.java
