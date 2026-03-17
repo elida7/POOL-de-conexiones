@@ -1,12 +1,17 @@
 main\Java\dbcomponent\core\ConnectionPool.class
 main\Java\simulaciones\PoolConexiones.class
+main\Java\dbcomponent\queries\QueryRepository.class
 main\Java\simulaciones\SimulacionRaw.class
 main\Java\dbcomponent\core\ConnectionConfig.class
 main\Java\simulaciones\SimulacionPooled.class
 main\Java\dbcomponent\core\DriverManagerConnectionProvider.class
+main\Java\dbcomponent\queries\PropertiesQueryRepository.class
+main\Java\dbcomponent\adapters\PostgresAdapter.class
+main\Java\dbcomponent\adapters\SqlAdapter.class
 main\Java\utils\LoggerSimulacion.class
 main\Java\dbcomponent\core\ConnectionProvider.class
 main\Java\modelos\Muestra.class
+main\Java\dbcomponent\adapters\IDAdapter.class
 main\Java\config\Configuracion.class
 main\Java\Main.class
 main\Java\simulaciones\HiloPeticion.class
