@@ -1,4 +1,5 @@
 main\Java\dbcomponent\core\ConnectionPool.class
+main\Java\MainDbComponent.class
 main\Java\simulaciones\PoolConexiones.class
 main\Java\dbcomponent\DbComponent.class
 main\Java\dbcomponent\queries\QueryRepository.class
