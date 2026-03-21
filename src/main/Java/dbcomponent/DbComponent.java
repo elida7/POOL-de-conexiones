@@ -32,7 +32,9 @@ public class DbComponent {
             throw new IllegalArgumentException("queryRepository no puede ser null");
         }
 
+        // El adapter decide como crear conexiones segun el motor.
         ConnectionProvider provider = adapter.createProvider(config);
+        // El componente siempre trabaja contra el pool, no contra DriverManager directo.
         this.pool = new ConnectionPool(provider, minConnections, maxConnections);
         this.queryRepository = queryRepository;
     }
@@ -41,6 +43,7 @@ public class DbComponent {
      * Ejecuta una query predefinida por clave.
      */
     public boolean query(String key) throws SQLException {
+        // No recibimos SQL crudo: todo sale de queries predefinidas por key.
         String sql = queryRepository.getByKey(key);
         Connection connection = null;
         try {
@@ -63,12 +66,14 @@ public class DbComponent {
         boolean originalAutoCommit = true;
         try {
             connection = pool.acquire();
+            // Guardamos estado original para no "contaminar" la conexion reciclada.
             originalAutoCommit = connection.getAutoCommit();
             connection.setAutoCommit(false);
 
             for (String key : keys) {
                 String sql = queryRepository.getByKey(key);
                 if (!ejecutarSql(connection, sql)) {
+                    // Si una query falla, toda la transaccion se revierte.
                     connection.rollback();
                     return false;
                 }
@@ -84,6 +89,7 @@ public class DbComponent {
         } finally {
             if (connection != null) {
                 try {
+                    // Restauramos auto-commit antes de devolver al pool.
                     connection.setAutoCommit(originalAutoCommit);
                 } catch (SQLException ignored) {
                 }

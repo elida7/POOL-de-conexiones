@@ -28,17 +28,20 @@ public class PropertiesQueryRepository implements QueryRepository {
         if (query == null || query.isBlank()) {
             throw new IllegalArgumentException("No existe query predefinida para key: " + key);
         }
+        // Centralizar queries aqui evita exponer SQL libre en la API publica.
         return query;
     }
 
     private void loadProperties(String file) throws IOException {
         try {
+            // Permite ejecutar desde IDE tomando archivo local.
             properties.load(new FileInputStream(file));
         } catch (IOException e) {
             try (InputStream is = getClass().getClassLoader().getResourceAsStream(file)) {
                 if (is == null) {
                     throw e;
                 }
+                // Permite ejecutar empaquetado leyendo desde resources.
                 properties.load(is);
             }
         }

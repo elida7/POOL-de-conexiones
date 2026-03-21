@@ -16,6 +16,7 @@ public class SqlAdapter implements IDAdapter {
             throw new IllegalArgumentException("ConnectionConfig no puede ser null");
         }
         if (config.getDriverClassName() == null || config.getDriverClassName().isBlank()) {
+            // En adapter generico el driver siempre debe venir informado.
             throw new IllegalArgumentException("driverClassName es requerido para SqlAdapter");
         }
         return new DriverManagerConnectionProvider(config);

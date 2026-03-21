@@ -20,6 +20,7 @@ public class PostgresAdapter implements IDAdapter {
 
         String driver = config.getDriverClassName();
         if (driver == null || driver.isBlank()) {
+            // Si no viene driver explicito, usamos el default de Postgres.
             ConnectionConfig resolved = new ConnectionConfig(
                 config.getJdbcUrl(),
                 config.getUsername(),

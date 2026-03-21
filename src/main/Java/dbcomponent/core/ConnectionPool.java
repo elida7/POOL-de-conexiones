@@ -32,16 +32,19 @@ public class ConnectionPool {
     }
 
     public Connection acquire() throws SQLException {
+        // Camino rapido: reusar una conexion libre del pool.
         Connection conn = pool.poll();
         if (conn != null) {
             return conn;
         }
 
+        // Si aun no llegamos al maximo, creamos una nueva.
         if (totalCreadas.get() < maxConnections) {
             return crearNueva();
         }
 
         try {
+            // Si el pool esta al limite, esperamos hasta que alguien libere una conexion.
             return pool.take();
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
@@ -54,6 +57,7 @@ public class ConnectionPool {
             return;
         }
         if (!pool.offer(connection)) {
+            // Si no cabe en la cola, la cerramos para evitar fugas.
             cerrarSilencioso(connection);
         }
     }

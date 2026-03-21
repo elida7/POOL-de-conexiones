@@ -17,6 +17,7 @@ public class MainDbComponent {
     public static void main(String[] args) {
         DbComponent dbComponent = null;
         try {
+            // Datos directos de conexion (sin depender del config del simulador).
             ConnectionConfig config = new ConnectionConfig(
                 "jdbc:postgresql://localhost:5432/simulacion_db",
                 "postgres",
@@ -24,6 +25,7 @@ public class MainDbComponent {
                 "org.postgresql.Driver"
             );
 
+            // Si quiero otro motor, aca cambio adapter + url/driver y el DbComponent no cambia.
             IDAdapter adapter = new PostgresAdapter();
             QueryRepository repository = new PropertiesQueryRepository("dbcomponent-queries.properties");
 
@@ -35,6 +37,7 @@ public class MainDbComponent {
             boolean txOk = dbComponent.transaction(List.of("health", "health"));
             System.out.println("transaction(['health','health']) => " + txOk);
 
+            // Sirve para evidenciar reciclado de conexiones del pool.
             System.out.println("Conexiones creadas por el pool: " + dbComponent.getTotalConnectionsCreated());
         } catch (SQLException e) {
             System.err.println("Error SQL en demo DbComponent: " + e.getMessage());
