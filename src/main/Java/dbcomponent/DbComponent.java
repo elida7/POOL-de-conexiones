@@ -1,6 +1,7 @@
 package main.Java.dbcomponent;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
@@ -40,26 +41,35 @@ public class DbComponent {
     }
 
     /**
-     * Ejecuta una query predefinida por clave.
+     * Ejecuta una query predefinida por clave (sin parametros).
      */
     public boolean query(String key) throws SQLException {
+        return query(key, List.of());
+    }
+
+    /**
+     * Ejecuta una query predefinida por clave con argumentos para placeholders {@code ?}.
+     */
+    public boolean query(String key, List<Object> params) throws SQLException {
         // No recibimos SQL crudo: todo sale de queries predefinidas por key.
         String sql = queryRepository.getByKey(key);
+        List<Object> p = params != null ? params : List.of();
+        validarPlaceholders(sql, p);
         Connection connection = null;
         try {
             connection = pool.acquire();
-            return ejecutarSql(connection, sql);
+            return ejecutar(connection, sql, p);
         } finally {
             pool.release(connection);
         }
     }
 
     /**
-     * Ejecuta una transaccion con una lista de keys predefinidas.
+     * Ejecuta una transaccion: cada paso es una query predefinida con su propio conjunto de argumentos.
      */
-    public boolean transaction(List<String> keys) throws SQLException {
-        if (keys == null || keys.isEmpty()) {
-            throw new IllegalArgumentException("keys no puede ser null o vacia");
+    public boolean transaction(List<QueryInvocation> steps) throws SQLException {
+        if (steps == null || steps.isEmpty()) {
+            throw new IllegalArgumentException("steps no puede ser null o vacia");
         }
 
         Connection connection = null;
@@ -70,9 +80,11 @@ public class DbComponent {
             originalAutoCommit = connection.getAutoCommit();
             connection.setAutoCommit(false);
 
-            for (String key : keys) {
-                String sql = queryRepository.getByKey(key);
-                if (!ejecutarSql(connection, sql)) {
+            for (QueryInvocation step : steps) {
+                String sql = queryRepository.getByKey(step.getKey());
+                List<Object> p = step.getParams();
+                validarPlaceholders(sql, p);
+                if (!ejecutar(connection, sql, p)) {
                     // Si una query falla, toda la transaccion se revierte.
                     connection.rollback();
                     return false;
@@ -106,7 +118,41 @@ public class DbComponent {
         return pool.getTotalCreadas();
     }
 
-    private boolean ejecutarSql(Connection connection, String sql) throws SQLException {
+    private static void validarPlaceholders(String sql, List<Object> params) {
+        int esperados = contarPlaceholders(sql);
+        if (esperados != params.size()) {
+            throw new IllegalArgumentException(
+                "Cantidad de '?' (" + esperados + ") no coincide con parametros (" + params.size() + ")"
+            );
+        }
+    }
+
+    private static int contarPlaceholders(String sql) {
+        int c = 0;
+        for (int i = 0; i < sql.length(); i++) {
+            if (sql.charAt(i) == '?') {
+                c++;
+            }
+        }
+        return c;
+    }
+
+    private boolean ejecutar(Connection connection, String sql, List<Object> params) throws SQLException {
+        if (params.isEmpty()) {
+            return ejecutarSqlSinParams(connection, sql);
+        }
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            for (int i = 0; i < params.size(); i++) {
+                ps.setObject(i + 1, params.get(i));
+            }
+            ps.execute();
+            return true;
+        } catch (SQLException e) {
+            return false;
+        }
+    }
+
+    private boolean ejecutarSqlSinParams(Connection connection, String sql) throws SQLException {
         try (Statement statement = connection.createStatement()) {
             statement.execute(sql);
             return true;

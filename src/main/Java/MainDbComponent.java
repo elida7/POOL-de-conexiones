@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import main.Java.dbcomponent.DbComponent;
+import main.Java.dbcomponent.QueryInvocation;
 import main.Java.dbcomponent.adapters.IDAdapter;
 import main.Java.dbcomponent.adapters.PostgresAdapter;
 import main.Java.dbcomponent.adapters.SqlAdapter;
@@ -50,11 +51,17 @@ public class MainDbComponent {
 
             dbComponent = new DbComponent(adapter, config, 1, 5, repository);
 
-            boolean healthOk = dbComponent.query("health");
+            boolean healthOk = dbComponent.query("health", List.of());
             System.out.println("engine=" + engine + " | query('health') => " + healthOk);
 
-            boolean txOk = dbComponent.transaction(List.of("health", "health"));
-            System.out.println("engine=" + engine + " | transaction(['health','health']) => " + txOk);
+            boolean pingOk = dbComponent.query("ping", List.of(1));
+            System.out.println("engine=" + engine + " | query('ping', [1]) => " + pingOk);
+
+            boolean txOk = dbComponent.transaction(List.of(
+                QueryInvocation.of("health"),
+                QueryInvocation.of("ping", List.of(2))
+            ));
+            System.out.println("engine=" + engine + " | transaction([health, ping(2)]) => " + txOk);
 
             // Sirve para evidenciar reciclado de conexiones del pool.
             System.out.println("Conexiones creadas por el pool: " + dbComponent.getTotalConnectionsCreated());
